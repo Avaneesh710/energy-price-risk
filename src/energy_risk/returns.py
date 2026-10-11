@@ -19,7 +19,7 @@ def annual_vol(returns, window=30):
 def historical_var(returns, level=0.95):
     return -np.quantile(returns, 1-level)
     
-    # VaR is value at risk meaures what loss will be exceded on only 5% of days. It is negative of the (1 - level) quantile of return distribution. - 5% quantile as default.#
+    # VaR is value at risk meaures what loss will be exceded on only 5% of days. It is negative of the (1 - level) quantile of return distribution. - 5% quantile as default.
     # finds the return below which 5% of observations fail e.g. return = -0.03 so code returns 0.03 so 95% of days the loss is below 3% 
     # uses actual past returns instead of distribution but assumes future looks like sampled past.
     # code measures risk for one who loses when price falls but for fuel buying customers they lose when price rises so need to look at upper tail.
