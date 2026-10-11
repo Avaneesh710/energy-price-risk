@@ -14,3 +14,4 @@ def price_policy(paths, trigger, loading=0.2):
     }
     
     # Monte Carlo estimate has standard error of σ /√N where σ is std. deviation of payouts and N is number of paths.
+    
