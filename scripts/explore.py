@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from energy_risk.data import load_brent
 from energy_risk.returns import log_returns, annual_vol, historical_var      # made importable by pyproject.toml file
 
+#-------------------------------loading data + analysing ----------------------------------
 prices = load_brent("data/raw/brent_fred.csv")
 r = log_returns(prices)
 
@@ -13,11 +14,14 @@ print(r.describe())
 print("skew:", r.skew(), "| excess kurtosis:", r.kurt() )  
 # unbiased skew of dataset measures asymm relative to normal distrib (skew =0) 
 # kurtosis is degree of tailedness in a prob distrib kurt val for normal distrib is 3. excess kurtosis subtracts 3 so mean for normal distrib is 0.
+# kurt = 53.7 and skew = -1.53 so big drops more extreme than big rises - few days dominate everything
 
 print("annual vol, full history:", r.std()*np.sqrt(252))
 print("annual vol, last 5 yrs:", r[r.index >= "2021-10-01"].std() * np.sqrt(252))
 print("downside VaR95:", historical_var(r), "| upside 95% quantile:", np.quantile(r,0.95))
 print("largest daily moves:\n:", r.abs().sort_values().tail(5))
+
+#--------------------------------Plots ----------------------------------------
 
 plt.close()
 fig, ax = plt.subplots(3,1, figsize=(10,10))
@@ -37,3 +41,22 @@ for a in ax:
 plt.tight_layout()
 #plt.savefig("notebooks/brent_log_returns+volatility.png", dpi=150)
 
+plt.close()
+fig2, ax2 = plt.subplots(figsize=(9,4))
+(r*100).hist(bins=200, ax=ax2, log=True)
+ax2.set_title("Daily Log Returns - Full Range")
+ax2.set_xlabel("Daily Log Return (%)"); ax2.set_ylabel("Number of Trading Days (log)")
+plt.tight_layout()
+#plt.savefig("notebooks/full_log_returns.png", dpi=150)
+
+# --------------data check on the extreme values -------------------
+
+big = r[r.abs() > 0.25]
+print("signed extreme returns:\n", big)
+for d in big.index:
+    i = prices.index.get_loc(d)
+    print(prices.iloc[i-2:i+3].to_string(), "\n")
+    
+mask = (r.index >= "2020-03-01") & (r.index <= "2020-05-31")
+print ("vol excl. Mar-May 2020:", r[~mask].std() * np.sqrt(252))
+print("vol last 1 yr:", r[r.index >= "2025-10-12"].std() * np.sqrt(252))
