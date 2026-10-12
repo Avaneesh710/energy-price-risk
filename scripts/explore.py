@@ -23,13 +23,14 @@ plt.close()
 fig, ax = plt.subplots(3,1, figsize=(10,10))
 
 prices.plot(ax=ax[0], title = "Brent Crude Spot Price, 1987 to Present")
-ax[0].set_xlabel("Date"); ax[0].set_ylabel("Price(USD per Barrel)")
+ax[0].set_xlabel("Date"); ax[0].set_ylabel("Price (USD per Barrel)")
 
 (r*100).hist(bins=100, ax=ax[1]); ax[1].set_title("Distribution of Daily Log Returns")
 ax[1].set_xlabel("Daily Log Return (%)"); ax[1].set_ylabel("Number of Trading Days")
 
 (annual_vol(r)*100).plot(ax=ax[2], title="30-day Rolling Annualised Volatility")
 ax[2].set_xlabel("Date"); ax[2].set_ylabel("Annualised Volatility (%)")
+# 9097 obs so about 231 days per year so over 252 so ann_vol overestimated from 42.8% to around 41%
 
 for a in ax:
     a.grid(alpha=0.3)
