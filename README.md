@@ -36,8 +36,8 @@ python -m pip install -e .
 ## Run
 
 ```bash
-python scripts/step1_crosscheck.py   # data cross-check
-python scripts/step2_explore.py      # returns analysis, extreme days, volatility windows, plots
+python scripts/crosscheck_data_sources.py             # data cross-check
+python scripts/explore_returns_and_volatility.py      # returns analysis, extreme days, volatility windows, plots
 ```
 
 ## Project structure
