@@ -58,5 +58,13 @@ for d in big.index:
     print(prices.iloc[i-2:i+3].to_string(), "\n")
     
 mask = (r.index >= "2020-03-01") & (r.index <= "2020-05-31")
-print ("vol excl. Mar-May 2020:", r[~mask].std() * np.sqrt(252))
-print("vol last 1 yr:", r[r.index >= "2025-10-12"].std() * np.sqrt(252))
+
+windows = {
+    "Full history": r,
+    "Last 5 years (from 1 Oct 2021)": r[r.index >= "2021-10-01"],
+    "Last 1 year (from 1 Oct 2025)" : r[r.index >= "2025-10-01"],
+    "Full year excluding March - May 2020": r[~mask],
+}
+
+for name, x in windows.items():
+    print(f"{name}: {x.std() * np.sqrt(252):.1%} (n={len(x)})")
