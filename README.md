@@ -42,11 +42,14 @@ python scripts/step2_explore.py      # returns analysis, extreme days, volatilit
 
 ## Project structure
 
+```bash
 src/energy_risk/ data.py, returns.py, simulate.py, pricing.py
-scripts/ runnable analysis scripts
-tests/ pytest suite
-data/raw/ source CSVs
-notebooks/ figures
+scripts/                                                        # runnable analysis scripts
+tests/                                                          # pytest suite
+data/raw/                                                       # source CSVs
+notebooks/
+figures/                                                        # plots
+```
 
 ## Results so far
 
