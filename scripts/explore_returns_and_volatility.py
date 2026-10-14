@@ -39,7 +39,7 @@ ax[2].set_xlabel("Date"); ax[2].set_ylabel("Annualised Volatility (%)")
 for a in ax:
     a.grid(alpha=0.3)
 plt.tight_layout()
-#plt.savefig("notebooks/brent_log_returns+volatility.png", dpi=150)
+#plt.savefig("figures/brent_return_tails_log_scale.png", dpi=150)
 
 plt.close()
 fig2, ax2 = plt.subplots(figsize=(9,4))
