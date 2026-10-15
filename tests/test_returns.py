@@ -29,7 +29,7 @@ def test_annual_vol_uses_sqrt_252_scaling():
 
 def test_annual_vol_first_window_minus_one_values_are_nan():
     r = pd.Series(np.linspace(-0.01, 0.01, 50))
-    vol = annual_vol(r, windows=30)
+    vol = annual_vol(r, window=30)
     assert vol.iloc[:29].isna().all()                       # firat 29 values must be NaN and the rest is not Nan
     assert vol.iloc[29:].notna().all()
 

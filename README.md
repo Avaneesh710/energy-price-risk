@@ -38,6 +38,7 @@ python -m pip install -e .
 ```bash
 python scripts/crosscheck_data_sources.py             # data cross-check
 python scripts/explore_returns_and_volatility.py      # returns analysis, extreme days, volatility windows, plots
+python -m pytest -v                                   # run the test suite
 ```
 
 ## Project structure
@@ -48,8 +49,15 @@ scripts/                                                        # runnable analy
 tests/                                                          # pytest suite
 data/raw/                                                       # source CSVs
 notebooks/
-figures/                                                        # plots
+figures/                                                        # saved plots
 ```
+
+## Testing
+
+`python -m pytest -v` runs 27 tests covering data loading, returns, volatility, VaR,
+the GBM and bootstrap simulators and the pricing functions. Checks include hand
+calculations, reproducibility with fixed seeds, and a comparison of the Monte Carlo
+call price with the Black-Scholes formula (agreement within 4 standard errors).
 
 ## Results so far
 
