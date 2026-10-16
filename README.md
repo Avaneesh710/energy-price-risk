@@ -38,6 +38,7 @@ python -m pip install -e .
 ```bash
 python scripts/crosscheck_data_sources.py             # data cross-check
 python scripts/explore_returns_and_volatility.py      # returns analysis, extreme days, volatility windows, plots
+python scripts/compare_gbm_and_bootstrap.py           # simulation vs history
 python -m pytest -v                                   # run the test suite
 ```
 
@@ -75,6 +76,36 @@ call price with the Black-Scholes formula (agreement within 4 standard errors).
 | 2020-04-22 | 9.12 to 13.77          | +51.0%        | +0.412     |
 
 Each sits inside a coherent run of prices, so all are kept in the data.
+
+### Simulation comparison
+
+Three-month (63 trading day) horizon from the latest price (113.96 USD/bbl).
+Real returns are demeaned, GBM uses the same volatility (42.8%) and a drift that
+makes its log returns zero-mean, so the models differ only in distribution shape.
+Historical windows are overlapping (about 143 independent).
+
+| 63-day log return (%) | 1%    | 5%    | 25%   | 50%  | 75%  | 95%  | 99%  | Excess kurtosis |
+| --------------------- | ----- | ----- | ----- | ---- | ---- | ---- | ---- | --------------- |
+| Historical            | -67.4 | -32.5 | -10.4 | 0.3  | 11.6 | 30.8 | 57.0 | 6.40            |
+| GBM                   | -49.8 | -35.2 | -14.3 | -0.0 | 14.4 | 35.3 | 49.7 | 0.02            |
+| Bootstrap             | -54.9 | -34.9 | -13.5 | 0.3  | 13.9 | 34.1 | 49.8 | 0.83            |
+
+Findings: the bootstrap's kurtosis matches the iid expectation (daily 53.7 / 63),
+while real 63-day returns are much fatter-tailed (6.40), which points to volatility
+clustering. Real returns are more peaked in the middle and heavier in the extreme
+tails than both models. A single volatility overstates ordinary-period spread and
+understates crisis moves.
+
+Expected payout per barrel of an average-price policy (before any loading):
+
+| Trigger (USD) | GBM  | Bootstrap |
+| ------------- | ---- | --------- |
+| 113.96 (100%) | 6.40 | 6.18      |
+| 125.36 (110%) | 2.30 | 2.14      |
+| 136.75 (120%) | 0.67 | 0.64      |
+| 148.15 (130%) | 0.16 | 0.19      |
+
+Model differences are small up to a 120% trigger and larger far out in the tail.
 
 ### Volatility by window
 
@@ -115,3 +146,5 @@ so pricing results will be shown for low, base and high volatility cases.
 - This is a spot price series. Brent futures quoted on 21 April 2020 were
   reported at roughly 17 to 23 USD, well above 9.12, so a futures-based series
   would show a smaller 2020 move.
+- GBM and the iid bootstrap assume constant volatility and independent returns,
+  and both understate extreme 3-month moves seen in historical data.
