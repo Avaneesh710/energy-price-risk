@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 import pytest
 from scipy.stats import norm
-from energy_risk.simulate import simulate_bootstrap, simulate_gbm
+from energy_risk.simulate import simulate_bootstrap, simulate_gbm, sim_block_bootstrap
 
 def test_gbm_output_shape():
     paths = simulate_gbm(100,0.0, 0.3, days=20, n_paths=50)
@@ -57,3 +57,23 @@ def test_bootstrap_constant_returns_give_exact_growth():
     
 # Simulation correctness: with zero volatility, GBM must reproduce the exact drift path. With zero drift, the mean terminal price must stay at the start price. 
 # The strongest test compares the Monte Carlo call price with the closed-form Black-Scholes price, which validates the simulator against a known answer
+
+def test_block_bootstrap_shape_and_reproducibility():
+    r = pd.Series(np.random.default_rng(0).normal(0,0.02,500))
+    a = sim_block_bootstrap(100, r, 30, 40, block=7, seed=3)
+    b = sim_block_bootstrap(100, r, 30, 40, block=7, seed=3)
+    assert a.shape == (40, 30)
+    assert np.array_equal(a, b)
+
+def test_block_bootstrap_constant_returns_give_exact_growth():
+    r = pd.Series([0.01] * 50)
+    paths = sim_block_bootstrap(100, r, days=10, n_paths=3, block=4)
+    assert np.allclose(paths, 100 * np.exp(0.01 * np.arange(1, 11)))
+
+
+def test_block_bootstrap_keeps_consecutive_returns_together():
+    ramp = pd.Series(np.arange(100) / 1000.0)
+    paths = sim_block_bootstrap(1.0, ramp, days=8, n_paths=20, block=4, seed=5)
+    steps = np.diff(np.log(np.hstack([np.ones((20, 1)), paths])), axis=1)
+    assert np.allclose(np.diff(steps[:, :4], axis=1), 0.001)
+    assert np.allclose(np.diff(steps[:, 4:], axis=1), 0.001)

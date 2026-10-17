@@ -19,3 +19,14 @@ def simulate_bootstrap(s0, returns, days, n_paths, seed = 42):
     return s0 * np.exp(np.cumsum(draws, axis=1))
     # draws returns at random with replacement from actual history, keeps real tails but treats days as indep so loses volatility clustering .
     # Comparing shows how  much normal distrib matters.
+    
+def sim_block_bootstrap(s0, returns, days, n_paths, block=21, seed=42):
+    rng = np.random.default_rng(seed)
+    x = returns.values
+    n_blocks = int(np.ceil(days / block))
+    starts = rng.integers(0, len(x) - block + 1, size =(n_paths, n_blocks))
+    idx = (starts[:, :, None] + np.arange(block)).reshape(n_paths, -1)[:, :days]  
+    return s0 * np.exp(np.cumsum(x[idx], axis=1))
+ # each path picks random start postitions, takes block consecutive returns from each, joins the blocks and trims to req number of days
+ # Use block bootstrap as it resamples runs of consec. days instead of single ones.
+ # Ech run keps the calm or turbulent character so volatility clustering survives.
