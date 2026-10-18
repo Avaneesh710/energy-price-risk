@@ -77,7 +77,7 @@ call price with the Black-Scholes formula (agreement within 4 standard errors).
 
 Each sits inside a coherent run of prices, so all are kept in the data.
 
-### Simulation comparison
+## Simulation comparison
 
 Three-month (63 trading day) horizon from the latest price (113.96 USD/bbl).
 Real returns are demeaned, GBM uses the same volatility (42.8%) and a drift that
@@ -122,6 +122,36 @@ Mar-May 2020 is under 1% of the days but adds about 4 percentage points to
 full-history volatility. The last year is a markedly higher-volatility regime,
 so pricing results will be shown for low, base and high volatility cases.
 
+### Block bootstrap
+
+Resampling runs of consecutive days keeps volatility clustering. Longer blocks
+move the simulated distribution toward history:
+
+| Block length | 1%    | 5%    | 25%   | 75%  | 95%  | 99%  | Excess kurtosis |
+| ------------ | ----- | ----- | ----- | ---- | ---- | ---- | --------------- |
+| 10 days      | -54.2 | -34.1 | -12.6 | 13.0 | 32.6 | 50.1 | 1.74            |
+| 21 days      | -56.2 | -33.3 | -12.3 | 12.8 | 32.5 | 53.1 | 3.35            |
+| 63 days      | -67.0 | -32.4 | -10.4 | 11.6 | 30.8 | 57.1 | 6.32            |
+
+A 63-day block equals the horizon, so each path is one real historical window and
+the output replays history by construction. It is a reference, not a fitted model.
+
+Expected payout per barrel (breach probability), average-price policy, before loading:
+
+| Trigger (USD) | GBM          | Bootstrap    | Block 10d    | Block 21d    | Block 63d    |
+| ------------- | ------------ | ------------ | ------------ | ------------ | ------------ |
+| 113.96 (100%) | 6.40 (50.9%) | 6.18 (51.3%) | 5.88 (51.4%) | 5.91 (51.7%) | 5.70 (51.9%) |
+| 125.36 (110%) | 2.30 (22.9%) | 2.14 (21.7%) | 1.97 (19.9%) | 2.02 (19.4%) | 1.96 (17.6%) |
+| 136.75 (120%) | 0.67 (7.8%)  | 0.64 (6.9%)  | 0.65 (5.9%)  | 0.74 (5.7%)  | 0.84 (5.0%)  |
+| 148.15 (130%) | 0.16 (2.1%)  | 0.19 (1.9%)  | 0.27 (1.8%)  | 0.36 (1.9%)  | 0.50 (1.8%)  |
+
+At the money the models agree within about 4–11%. Far out of the money the
+expected payout varies two- to threefold, because fat tails make breaches rare
+but large. Results are reported as a model range, with the 21-day block
+bootstrap as the central case.
+
+![63-day return distributions](figures/brent_return_distributions_block21d.png)
+
 ### Context for the extreme days
 
 - **21 April 2020.** The day before, US WTI futures traded below zero for the
@@ -148,3 +178,5 @@ so pricing results will be shown for low, base and high volatility cases.
   would show a smaller 2020 move.
 - GBM and the iid bootstrap assume constant volatility and independent returns,
   and both understate extreme 3-month moves seen in historical data.
+- Only about 143 independent 3-month windows exist, so tail estimates rest on a
+  few episodes (2008-09 and 2020).

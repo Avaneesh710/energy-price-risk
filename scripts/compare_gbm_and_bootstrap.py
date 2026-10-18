@@ -7,7 +7,7 @@ from energy_risk.pricing import price_policy
 from energy_risk.returns import log_returns
 from energy_risk.simulate import simulate_bootstrap, simulate_gbm, sim_block_bootstrap
 
-HORIZON_DAYS = 21
+HORIZON_DAYS = 63
 N_PATHS = 200_000         # 3 months of trading days
 SEED = 42
 
@@ -24,7 +24,7 @@ mu = 0.5 * sigma**2                  # makes GBM daily log return have zero mean
 gbm_paths = simulate_gbm(s0, mu, sigma, HORIZON_DAYS, N_PATHS, seed=SEED)
 boot_paths = simulate_bootstrap(s0, r0, HORIZON_DAYS, N_PATHS, seed=SEED)
 
-BLOCK_DAYS = 63
+BLOCK_DAYS = 21
 block_paths = sim_block_bootstrap(s0, r0, HORIZON_DAYS, N_PATHS, block = BLOCK_DAYS, seed=SEED)
 block_term = np.log(block_paths[:, -1] / s0) * 100
 # ------------------ Terminal log return over the horizon, in percent ---------------------------------------
@@ -66,10 +66,18 @@ for a in ax:
     a.grid(alpha=0.3)
     a.legend()
 plt.tight_layout()
-#plt.savefig("figures/brent_return_distribs_historical_vs_sim.png", dpi=150)
+plt.savefig(f"figures/brent_return_block{BLOCK_DAYS}d.png", dpi=150)
 #plt.show()
 
 # Code prints 3 things:
 # Sim settings so can check the starting price and starting price and volatiliity
 # Table of 63-day return quantiles and excess kutosis for historical data, GBM snd Bootstrap and Block Bootstrap
 # Table of breach probability and expected payout per barrel at triggers from 100% to 130% of current price, under each model.
+
+print("\nBlock-length sensitivity (63-day log return quantiles, %):")
+print(f"{'block (days)':<14}" + "".join(f"{q:>9.0%}" for q in quantile_levels) + f"{'ex.kurt':>10}")
+for b in (5, 10, 21, 42, 63):
+    paths = sim_block_bootstrap(s0, r0, HORIZON_DAYS, N_PATHS, block=b, seed = SEED)
+    x = np.log(paths[:, -1] / s0) * 100
+    row = np.quantile(x, quantile_levels)
+    print(f"{b:<14}" + "".join(f"{v:>9.1f}" for v in row) + f"{kurtosis(x):>10.2f}")
