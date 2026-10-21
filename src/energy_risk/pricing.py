@@ -10,7 +10,8 @@ def price_policy(paths, trigger, loading=0.2):
         "prob_trigger" : (payouts > 0).mean(),        # fracton of paths with payout, proportion of true values
         "expected_payout" : payouts.mean(),           # Monte-Carlo estimate of expected payout, 'fair' premium before margin, ignores discounting and risk-neutral pricing (simplification)
         "premium": payouts.mean() * (1 + loading),    # loading is assumed margin 20% made up number.
-        "payout_95pct" : np.quantile(payouts, 0.95),  # size of bad outcome, relates to how much capital a seller would need to hold.
+        "payout_95pct" : np.quantile(payouts, 0.95),   # size of bad outcome, relates to how much capital a seller would need to hold.
+        "std_error" : payouts.std(ddof=1) / np.sqrt(len(payouts))       # Monte Carlo standard error of expected_payout
     }
     
     # Monte Carlo estimate has standard error of σ /√N where σ is std. deviation of payouts and N is number of paths.

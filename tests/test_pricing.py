@@ -73,3 +73,15 @@ def test_averaging_price_lowers_expected_payout_versus_terminal_price():
     
 # Pricing logic: a higher trigger never raises the premium, higher volatility does, and the premium equals expected payout * (1 + loading).
 # The last test confirms that averaging the price over the term gives a lower expected payout than using the final price, as averaging smooths out the extremes.
+
+def test_std_error_is_zero_when_every_payout_is_identical():
+    paths = np.full((50, 5), 120.0)
+    assert price_policy(paths, trigger=100.0)["std_error"] == pytest.approx(0.0)
+    
+def test_std_error_matches_formula_and_shrinks_with_more_paths():
+    small = simulate_gbm(100,0.0, 0.4, 30, 2_000)
+    large = simulate_gbm(100,0.0, 0.4, 30, 32_000, seed =1)
+    payouts = trigger_payout(small, 100.0)
+    expected = payouts.std(ddof=1) / np.sqrt(len(payouts))
+    assert price_policy(small, 100.0)["std_error"] == pytest.approx(expected)
+    assert price_policy(large, 100.0)["std_error"] < price_policy(small, 100.0)["std_error"]
