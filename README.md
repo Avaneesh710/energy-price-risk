@@ -1,11 +1,10 @@
 # Energy Price Risk: Brent Crude Trigger-Payout Pricing
 
+![tests](https://github.com/Avaneesh710/energy-price-risk/actions/workflows/tests.yml/badge.svg)
+
 A Python project that studies Brent crude price behaviour and prices a simple
 "pay the excess above a trigger" policy by Monte Carlo simulation.
 This is an educational project and not a production pricing model.
-
-**Status:** data loaded and validated; returns analysis, extreme-day check and
-volatility sensitivity complete; tests, simulation and pricing in progress.
 
 ## Question
 
@@ -36,21 +35,24 @@ python -m pip install -e .
 ## Run
 
 ```bash
-python scripts/crosscheck_data_sources.py             # data cross-check
-python scripts/explore_returns_and_volatility.py      # returns analysis, extreme days, volatility windows, plots
-python scripts/compare_gbm_and_bootstrap.py           # simulation vs history
-python -m pytest -v                                   # run the test suite
+python scripts/run_all.py     # runs every analysis script in order
+python -m pytest -v           # runs the test suite
 ```
+
+Scripts can also be run individually from the repo root, for example
+`python scripts/pricing_sensitivity_analysis.py`. Figures are saved to `figures/`
+and result tables to `results/`.
 
 ## Project structure
 
 ```bash
-src/energy_risk/ data.py, returns.py, simulate.py, pricing.py
+src/energy_risk/ data.py, returns.py, simulate.py, pricing.py   # Primary Mathematical Functions
 scripts/                                                        # runnable analysis scripts
-tests/                                                          # pytest suite
-data/raw/                                                       # source CSVs
-notebooks/
-figures/                                                        # saved plots
+tests/                                                          # pytest Suite
+data/raw/                                                       # Source CSVs
+results/                                                        # Output Tables (CSV)
+figures/                                                        # Saved Plots
+.github/workflows/                                              # Automated Tests
 ```
 
 ## Testing
