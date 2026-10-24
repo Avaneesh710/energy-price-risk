@@ -47,7 +47,7 @@ fig2, ax2 = plt.subplots(figsize=(9,4))
 ax2.set_title("Daily Log Returns - Full Range")
 ax2.set_xlabel("Daily Log Return (%)"); ax2.set_ylabel("Number of Trading Days (log)")
 plt.tight_layout()
-#plt.savefig("notebooks/full_log_returns.png", dpi=150)
+plt.savefig("notebooks/full_log_returns.png", dpi=150)
 
 # --------------data check on the extreme values -------------------
 
