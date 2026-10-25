@@ -194,6 +194,17 @@ Expected payout in USD per barrel (probability of any payout, %), 63-day term:
 
 Largest Monte Carlo standard error: 0.047 USD.
 
+Premium (expected payout plus 20% loading), USD per barrel, 63-day term:
+
+| Trigger | GBM low (39%) | GBM base (43%) | GBM high (61%) | Block bootstrap 21d |
+| ------- | ------------- | -------------- | -------------- | ------------------- |
+| 100%    | 6.90          | 7.69           | 11.56          | 7.07                |
+| 105%    | 4.01          | 4.75           | 8.43           | 4.18                |
+| 110%    | 2.17          | 2.77           | 6.02           | 2.40                |
+| 120%    | 0.52          | 0.81           | 2.90           | 0.88                |
+| 130%    | 0.09          | 0.19           | 1.31           | 0.42                |
+| 150%    | 0.00          | 0.01           | 0.22           | 0.16                |
+
 Expected payout by policy term, USD per barrel:
 
 | Term (trading days) | Trigger | GBM low | GBM base | GBM high | Block 21d |

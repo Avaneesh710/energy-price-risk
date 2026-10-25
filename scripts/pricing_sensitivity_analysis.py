@@ -56,6 +56,9 @@ for term in TERMS:
     prob = sub.pivot(index="trigger_pct", columns="model", values="prob_breach")[model_order]
     print(f"\nExpected payout, USD per barrel, term = {term} trading days")
     print(payout.round(2).to_string())
+    premium = sub.pivot(index="trigger_pct", columns="model", values="premium")[model_order]
+    print(f"Premium with {LOADING:.0%} loading, USD per barrel, term = {term} trading days")
+    print(premium.round(2).to_string())
     print(f"largest Monte Carlo standard error in this table: {sub['std_error'].max():.3f} USD")
     print(f"Probability the policy pays out (%), term = {term} trading days")
     print((prob * 100).round(1).to_string())
