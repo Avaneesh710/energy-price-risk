@@ -283,13 +283,24 @@ Findings:
   realised average payout exceeds both models, and GBM by the most. In sample
   the block bootstrap captures most of it (0.32% vs 0.44% at 130%); out of
   sample both fall short by a factor of three or more at 130%.
-- **The out-of-sample tail is one episode.** Windows starting between March
-  and June 2020, when Brent was between 9 and 30 USD and then rebounded,
-  account for about 61% of the realised payout at 120%, 77% at 130% and
-  99% at 150%. Excluding them, the realised payout is 0.38% at 120% (below
-  both models), 0.13% at 130% (in line with both) and close to zero at 150%.
-  The gap therefore reflects a single crash and rebound measured against a
-  very low starting price, not a steady bias.
+- **The out-of-sample tail is one episode.** Removing the 83 windows that
+  start between 1 March and 30 June 2020, when Brent was between 9 and 30 USD
+  and then rebounded, changes the realised payouts as follows
+  (`results/backtest_excluding_2020.csv`):
+
+  | Trigger | Realised payout % | Excluding Mar-Jun 2020 starts | Share from those starts | GBM % | Block % |
+  | ------- | ----------------- | ----------------------------- | ----------------------- | ----- | ------- |
+  | 110%    | 1.81              | 1.21                          | 34%                     | 1.95  | 1.77    |
+  | 120%    | 0.88              | 0.38                          | 57%                     | 0.55  | 0.53    |
+  | 130%    | 0.54              | 0.13                          | 77%                     | 0.12  | 0.18    |
+  | 150%    | 0.29              | 0.00                          | 99%                     | 0.00  | 0.02    |
+
+  Without those windows both models price the out-of-sample tail at or above
+  what happened, so the gap reflects a single crash and rebound measured
+  against a very low starting price, not a steady bias. In sample, the same
+  exclusion brings the realised 130% payout to 0.25%, between GBM (0.14%)
+  and the block bootstrap (0.32%).
+
 - **The in-sample block bootstrap fit is partly circular**, since it resamples
   the same returns it is tested against. The out-of-sample test is the fairer
   comparison.

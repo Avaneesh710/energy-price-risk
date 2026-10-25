@@ -1,7 +1,7 @@
 import numpy as np 
 import pandas as pd 
 
-def realised_window_stats(prices, horizon, trigger_fractions, start=None):
+def realised_window_stats(prices, horizon, trigger_fractions, start=None, exclude=None):
     # For every historical start date t, compare avg of next 'horizon' prices with trigger set at k * price at t
     p = prices.values.astype(float)
     n = len(p) - horizon
@@ -10,8 +10,14 @@ def realised_window_stats(prices, horizon, trigger_fractions, start=None):
     csum = np.concatenate([[0], np.cumsum(p)])
     avg_next = (csum[horizon + 1:] - csum[1:n+1]) / horizon
     ratio = avg_next / p[:n]
+    starts = prices.index[:n]
+    keep = np.ones(n, dtype=bool)
     if start is not None:
-        ratio = ratio[prices.index[:n] >= pd.Timestamp(start)]
+        keep &= starts >= pd.Timestamp(start)
+    if exclude is not None:
+        lo, hi = pd.Timestamp(exclude[0]), pd.Timestamp(exclude[1])
+        keep &= ~((starts >= lo) & (starts <= hi))
+    ratio = ratio[keep]
     if len(ratio) == 0:
         raise ValueError("No Windows Start On or After the Given Start Date")
     rows = []

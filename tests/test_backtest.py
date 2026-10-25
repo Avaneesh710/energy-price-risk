@@ -31,3 +31,9 @@ def test_series_shorter_than_horizon_raises():
     prices = pd.Series([1.0, 2.0, 3.0], index=pd.date_range("2020-01-01", periods=3))
     with pytest.raises(ValueError):
         realised_window_stats(prices, horizon=5, trigger_fractions=[1.0])
+
+def test_exclude_removes_windows_starting_in_range():
+    prices = pd.Series(100.0, index=pd.date_range("2020-01-01", periods=30))
+    everything = realised_window_stats(prices, 5, [1.0])
+    fewer = realised_window_stats(prices, 5, [1.0], exclude=("2020-01-05", "2020-01-09"))
+    assert fewer["n_windows"].iloc[0] == everything["n_windows"].iloc[0] - 5        

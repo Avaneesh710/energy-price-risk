@@ -15,6 +15,7 @@ SPLIT_DATE = "2010-01-01"
 N_PATHS = 100_000
 BLOCK_DAYS = 21
 SEED = 42
+EXCLUDE = ("2020-03-01", "2020-06-30")
 
 prices = load_brent("data/raw/brent_fred.csv")
 r = log_returns(prices)
@@ -63,11 +64,36 @@ def compare(setting, fit_returns, start):
     print(show.round(2).to_string(index=False))
     return table
 
+def crisis_check(setting, start, table):
+    full = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS,start=start)
+    excl = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS,start=start, exclude=EXCLUDE)
+    full_total = full["expected_payout_pct"] * full["n_windows"]
+    excl_total = excl["expected_payout_pct"] * excl["n_windows"]
+    out = pd.DataFrame({
+        "setting": setting,
+        "trigger_pct": full["trigger_pct"],
+        "realised_prob_excl": excl["prob_breach"],
+        "realised_payout_pct": full["expected_payout_pct"],
+        "realised_payout_excl_pct": excl["expected_payout_pct"],
+        "share_from_excluded_pct": 100 * (1 - excl_total / full_total),
+        "gbm_payout_pct": table["gbm_payout_pct"],
+        "block_payout_pct": table["block_payout_pct"],
+        "n_windows_excl": excl["n_windows"],
+    })
+    print(f"\n=== {setting}: Excluding Windows Starting {EXCLUDE[0]} to {EXCLUDE[1]} ===")
+    print(f"{full['n_windows'].iloc[0] - excl['n_windows'].iloc[0]} Windows Removed")
+    show = out.drop(columns=["setting", "n_windows_excl"]).copy()
+    print(show.round(2).to_string(index=False))
+    return out
+
 in_sample = compare("In-Sample (Models Fitted on All Data, Tested on All Windows)", r, None)
 out_sample = compare(f"Out of Sample (Models Fitted Before {SPLIT_DATE}, Tested from {SPLIT_DATE})", r[r.index < SPLIT_DATE], SPLIT_DATE)
+in_crisis = crisis_check("In-Sample", None, in_sample)
+out_crisis = crisis_check("Out of Sample", SPLIT_DATE, out_sample)
 
 Path("results").mkdir(exist_ok=True)
 pd.concat([in_sample, out_sample]).round(5).to_csv("results/backtest_trigger_breaches.csv", index=False)
+pd.concat([in_crisis, out_crisis]).round(5).to_csv("results/backtest_excluding_2020.csv", index=False)
 
 plt.close()
 Path("figures").mkdir(exist_ok=True)
