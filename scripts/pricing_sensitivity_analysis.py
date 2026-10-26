@@ -79,7 +79,7 @@ ax[0].set_ylabel("Expected Payout (% of Current Price, Log Scale)")
 ax[1].set_title(f"{MAIN_TERM}-Day Policy: Chance of a Payout vs Trigger")
 ax[1].set_ylabel("Probability of a Payout (%, Log Scale)")
 for a in ax:
-    a.set_xlabel("Trigger (% of current price)")
+    a.set_xlabel("Trigger (% of Current Price)")
     a.set_yscale("log")
     a.grid(alpha=0.3)
     a.legend(fontsize=8)

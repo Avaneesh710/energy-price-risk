@@ -96,6 +96,8 @@ call price with the Black-Scholes formula (agreement within 4 standard errors).
 
 Each sits inside a coherent run of prices, so all are kept in the data.
 
+![Daily log returns on a log scale, showing the fat tails](figures/brent_return_tails_log_scale.png)
+
 ## Simulation comparison
 
 Three-month (63 trading day) horizon from the latest price (113.96 USD/bbl).
@@ -239,6 +241,8 @@ Expected payout by policy term, USD per barrel:
 
 Largest Monte Carlo standard errors: 0.025 USD (21 days), 0.072 USD (126 days).
 Full results, including premiums, are in `results/pricing_sensitivity.csv`.
+
+![Expected payout vs policy term at a 110% trigger](figures/brent_policy_price_vs_term.png)
 
 Findings:
 
@@ -401,3 +405,7 @@ read as likely understated if a 2020-style episode is plausible over the term.
 - Payouts are measured relative to the starting price, so windows starting at
   crisis lows (March-June 2020) dominate the out-of-sample tail.
 - A single train/test split (1 January 2010) is used.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

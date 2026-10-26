@@ -102,16 +102,16 @@ Path("figures").mkdir(exist_ok=True)
 fig, ax = plt.subplots(1,2, figsize=(12,5), sharey=True)
 for a, table, title in (
     (ax[0], in_sample, "In-Sample: Models Fitted on All Data"),
-    (ax[1], out_sample, f"Out-of-Sample: Fitted Before {SPLIT_DATE[:4]}, Tested From {SPLIT_DATE}")
+    (ax[1], out_sample, f"Out-of-Sample: Fitted Before {SPLIT_DATE[:4]}, Tested from {SPLIT_DATE}")
 ):
-    for col, label in (("realised_prob", "Realised (history)"), ("gbm_prob", "GBM"), ("block_prob", "Block Bootstrap")):
+    for col, label in (("realised_prob", "Realised (History)"), ("gbm_prob", "GBM"), ("block_prob", "Block Bootstrap")):
         a.plot(table["trigger_pct"], (table[col] * 100).replace(0, np.nan), marker="o", label=label)
     a.set_title(title)
     a.set_xlabel("Trigger (% of Starting Price)")
     a.set_yscale("log")
     a.grid(alpha=0.3)
     a.legend()
-ax[0].set_ylabel(f"Probability Average Price Over {HORIZON} Days Exceeds Trigger (%, log scale)")
+ax[0].set_ylabel(f"Probability of a Payout over {HORIZON} Days (%, Log Scale)")
 plt.tight_layout()
 plt.savefig("figures/brent_backtest_breach_prob.png", dpi=150)
 #plt.show()

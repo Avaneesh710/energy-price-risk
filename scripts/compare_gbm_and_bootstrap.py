@@ -58,11 +58,11 @@ for name, x in samples.items():
     for a, log in ((ax[0], False), (ax[1], True)):
         a.hist(x, bins=120, range=(-80,80), density=True, histtype="step", label=name, log=log)
 
-ax[0].set_title(f"{HORIZON_DAYS}-Trading Day Log Return: Historical vs Simulated")
-ax[1].set_title("Same Data, Log y-axis (Shows the tails)")
+ax[0].set_title(f"{HORIZON_DAYS}-Trading-Day Log Return: Historical vs Simulated")
+ax[1].set_title("Same Data, Log Y-Axis (Shows the Tails)")
 for a in ax:
-    a.set_xlabel(f"{HORIZON_DAYS}-trading day log return (%)")
-    a.set_ylabel("Probability density (per percent point)")
+    a.set_xlabel(f"{HORIZON_DAYS}-Trading-Day Log Return (%)")
+    a.set_ylabel("Probability Density (per Percentage Point)")
     a.grid(alpha=0.3)
     a.legend()
 plt.tight_layout()
