@@ -11,6 +11,22 @@ This is an educational project and not a production pricing model.
 How likely is a given energy price trigger to be breached, and what is the
 expected payout of a policy that pays the excess above it?
 
+The policy pays `max(A - K, 0)` per barrel, where `A` is the average daily
+Brent price over the policy term and `K` is the trigger, set as a percentage
+of the price on the start date.
+
+## Summary
+
+- A 63-day policy with a trigger at 110% of today's price (125.36 USD) has an
+  expected payout of 2.00 USD per barrel under the central model (21-day block
+  bootstrap), or a premium of 2.40 USD with an assumed 20% loading.
+- The volatility assumption moves the price more than the choice of model:
+  the expected payout ranges from 1.81 to 5.02 USD across the cases tested.
+- In a backtest against history, both models' breach probabilities are within
+  about 1.3 standard errors of what happened. Out of sample, realised payouts
+  above a 120% trigger exceed both models, but most of that gap comes from
+  windows starting in March-June 2020.
+
 ## Data
 
 - Series: Europe Brent Spot Price FOB, daily, USD per barrel (FRED: DCOILBRENTEU, from the US EIA).
@@ -30,6 +46,7 @@ expected payout of a policy that pays the excess above it?
 python -m venv .venv
 .venv\Scripts\activate
 python -m pip install -e .
+python -m pip install -r requirements.txt   # optional: the exact versions used
 ```
 
 ## Run
@@ -45,24 +62,24 @@ and result tables to `results/`.
 
 ## Project structure
 
-```bash
-src/energy_risk/     # Primary Mathematical Functions
+```text
+src/energy_risk/     # core functions: data, returns, simulate, pricing, sensitivity, backtest
 scripts/             # runnable analysis scripts
-tests/               # pytest Suite
-data/raw/            # Source CSVs
-results/             # Output Tables (CSV)
-figures/             # Saved Plots
-.github/workflows/   # Automated Tests
+tests/               # pytest suite
+data/raw/            # source CSVs
+results/             # output tables (CSV)
+figures/             # saved plots
+.github/workflows/   # automated tests
 ```
 
 ## Testing
 
-`python -m pytest -v` runs 39 tests covering data loading, returns, volatility, VaR,
+`python -m pytest -v` runs 40 tests covering data loading, returns, volatility, VaR,
 the GBM and bootstrap simulators, pricing functions, sensitivity sweep and the backtest. Checks include hand
 calculations, reproducibility with fixed seeds, and a comparison of the Monte Carlo
 call price with the Black-Scholes formula (agreement within 4 standard errors).
 
-## Exploratory Results
+## Exploratory results
 
 - Daily log returns: std 2.69%, skew -1.53, excess kurtosis 53.7 (very fat tails).
 - Historical 95% daily VaR: 3.79% (downside), 3.70% (upside).
@@ -79,12 +96,14 @@ call price with the Black-Scholes formula (agreement within 4 standard errors).
 
 Each sits inside a coherent run of prices, so all are kept in the data.
 
-## Simulation Comparison
+## Simulation comparison
 
 Three-month (63 trading day) horizon from the latest price (113.96 USD/bbl).
 Real returns are demeaned, GBM uses the same volatility (42.8%) and a drift that
 makes its log returns zero-mean, so the models differ only in distribution shape.
-Historical windows are overlapping (about 143 independent).
+Historical windows are overlapping (about 143 independent). This section uses
+200,000 paths per model and the final results use 100,000, so payouts can differ
+slightly in the second decimal place; the final results supersede these tables.
 
 | 63-day log return (%) | 1%    | 5%    | 25%   | 50%  | 75%  | 95%  | 99%  | Excess kurtosis |
 | --------------------- | ----- | ----- | ----- | ---- | ---- | ---- | ---- | --------------- |
@@ -109,7 +128,7 @@ Expected payout per barrel of an average-price policy (before any loading):
 
 Model differences are small up to a 120% trigger and larger far out in the tail.
 
-### Volatility by Window
+### Volatility by window
 
 Annualised using sqrt(252) scaling.
 
@@ -123,6 +142,8 @@ Annualised using sqrt(252) scaling.
 Mar-May 2020 is under 1% of the days but adds about 4 percentage points to
 full-history volatility. The last year is a markedly higher-volatility regime,
 so pricing results will be shown for low, base and high volatility cases.
+
+![Brent price, daily returns and rolling volatility](figures/brent_price_returns_and_volatility.png)
 
 ### Block bootstrap
 
@@ -147,7 +168,7 @@ Expected payout per barrel (breach probability), average-price policy, before lo
 | 136.75 (120%) | 0.67 (7.8%)  | 0.64 (6.9%)  | 0.65 (5.9%)  | 0.74 (5.7%)  | 0.84 (5.0%)  |
 | 148.15 (130%) | 0.16 (2.1%)  | 0.19 (1.9%)  | 0.27 (1.8%)  | 0.36 (1.9%)  | 0.50 (1.8%)  |
 
-At the money the models agree within about 4–11%. Far out of the money the
+At the money the models agree within about 4-11%. Far out of the money the
 expected payout varies two- to threefold, because fat tails make breaches rare
 but large. Results are reported as a model range, with the 21-day block
 bootstrap as the central case.
@@ -312,7 +333,7 @@ read as likely understated if a 2020-style episode is plausible over the term.
 
 ![Backtest breach probabilities](figures/brent_backtest_breach_prob.png)
 
-## Future Work
+## Future work
 
 1. **Conditional volatility.** Fit a GARCH(1,1) or GJR-GARCH model with
    Student-t innovations, started from today's volatility state, so the

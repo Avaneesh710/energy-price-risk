@@ -22,7 +22,7 @@ def test_log_returns_add_up_over_time(prices):
     
 def test_annual_vol_uses_sqrt_252_scaling():
     rng = np.random.default_rng(0)                        # rng generator with 0 seed
-    r = pd.Series(rng.normal(0,0.02,200))                 # 200 synthetic runs with normal distrib with mean = 0 and atd = 0.02
+    r = pd.Series(rng.normal(0,0.02,200))                 # 200 synthetic runs with normal distrib with mean = 0 and std = 0.02
     vol = annual_vol(r, window=len(r)).iloc[-1]           # annual vol func over full obs window and takes only the last value
     assert vol == pytest.approx(r.std() * np.sqrt(252))   
     
@@ -30,7 +30,7 @@ def test_annual_vol_uses_sqrt_252_scaling():
 def test_annual_vol_first_window_minus_one_values_are_nan():
     r = pd.Series(np.linspace(-0.01, 0.01, 50))
     vol = annual_vol(r, window=30)
-    assert vol.iloc[:29].isna().all()                       # firat 29 values must be NaN and the rest is not Nan
+    assert vol.iloc[:29].isna().all()                       # first 29 values must be NaN and the rest is not Nan
     assert vol.iloc[29:].notna().all()
 
 def test_historical_var_known_quantile():

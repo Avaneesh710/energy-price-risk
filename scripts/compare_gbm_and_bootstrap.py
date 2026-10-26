@@ -7,8 +7,8 @@ from energy_risk.pricing import price_policy
 from energy_risk.returns import log_returns
 from energy_risk.simulate import simulate_bootstrap, simulate_gbm, sim_block_bootstrap
 
-HORIZON_DAYS = 63
-N_PATHS = 200_000         # 3 months of trading days
+HORIZON_DAYS = 63         # 3 months of trading days
+N_PATHS = 200_000
 SEED = 42
 
 prices = load_brent("data/raw/brent_fred.csv")
@@ -40,10 +40,10 @@ print(f"historical windows: {len(hist_term)} (overlapping, roughly {len(hist_ter
 
 quantile_levels = [0.01, 0.05, 0.25, 0.50, 0.75, 0.95, 0.99]
 print("\n63-day log return quantiles (%):")
-print(f"{'':<12}" + "".join(f"{q:>9.0%}" for q in quantile_levels) + f"{'ex_kurt':>10}") # left /right aligned in a x-char field (row labels)
+print(f"{'':<28}" + "".join(f"{q:>9.0%}" for q in quantile_levels) + f"{'ex_kurt':>10}") # left /right aligned in a x-char field (row labels)
 for name, x in samples.items():
     row = np.quantile(x, quantile_levels)
-    print(f"{name:<12}" + "".join(f"{v:>9.1f}" for v in row) + f"{kurtosis(x):>10.2f}")
+    print(f"{name:<28}" + "".join(f"{v:>9.1f}" for v in row) + f"{kurtosis(x):>10.2f}")
     
 print("\nModel price vs policy price (average-price payout, per barrel):")
 print(f"{'trigger':>10} {'model':>12} {'P(payout)':>12} {'E(payout)':>12}")
@@ -70,8 +70,8 @@ plt.savefig(f"figures/brent_return_block{BLOCK_DAYS}d.png", dpi=150)
 #plt.show()
 
 # Code prints 3 things:
-# Sim settings so can check the starting price and starting price and volatiliity
-# Table of 63-day return quantiles and excess kutosis for historical data, GBM snd Bootstrap and Block Bootstrap
+# Sim settings so can check the starting price and volatility
+# Table of 63-day return quantiles and excess kurtosis for historical data, GBM and Bootstrap and Block Bootstrap
 # Table of breach probability and expected payout per barrel at triggers from 100% to 130% of current price, under each model.
 
 print("\nBlock-length sensitivity (63-day log return quantiles, %):")

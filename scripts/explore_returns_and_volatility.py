@@ -39,7 +39,7 @@ ax[2].set_xlabel("Date"); ax[2].set_ylabel("Annualised Volatility (%)")
 for a in ax:
     a.grid(alpha=0.3)
 plt.tight_layout()
-plt.savefig("figures/brent_return_tails_log_scale.png", dpi=150)
+plt.savefig("figures/brent_price_returns_and_volatility.png", dpi=150)
 
 plt.close()
 fig2, ax2 = plt.subplots(figsize=(9,4))
@@ -47,7 +47,7 @@ fig2, ax2 = plt.subplots(figsize=(9,4))
 ax2.set_title("Daily Log Returns - Full Range")
 ax2.set_xlabel("Daily Log Return (%)"); ax2.set_ylabel("Number of Trading Days (log)")
 plt.tight_layout()
-plt.savefig("figures/full_log_returns.png", dpi=150)
+plt.savefig("figures/brent_return_tails_log_scale.png", dpi=150)
 
 # --------------data check on the extreme values -------------------
 
@@ -63,7 +63,7 @@ windows = {
     "Full history": r,
     "Last 5 years (from 1 Oct 2021)": r[r.index >= "2021-10-01"],
     "Last 1 year (from 1 Oct 2025)" : r[r.index >= "2025-10-01"],
-    "Full year excluding March - May 2020": r[~mask],
+    "Full history excluding Mar-May 2020": r[~mask],
 }
 
 for name, x in windows.items():

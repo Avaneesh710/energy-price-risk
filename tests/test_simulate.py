@@ -22,7 +22,7 @@ def test_gbm_zero_vol_is_deterministic_drift():
     mu, days = 0.05, 30
     paths = simulate_gbm(100,mu, 0.0, days, n_paths=5)
     expected = 100 * np.exp(mu * np.arange(1, days + 1) / 252) 
-    assert np.allclose(paths, expected)                         # tests if path calc (zero volatility) is close to the expected vlaue
+    assert np.allclose(paths, expected)                         # tests if path calc (zero volatility) is close to the expected value
     
 def test_gbm_with_zero_drift_keeps_mean_price_constant():
     paths = simulate_gbm(100, 0.0, 0.4, days=252, n_paths=200_000)

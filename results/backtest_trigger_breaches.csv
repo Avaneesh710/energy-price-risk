@@ -5,9 +5,9 @@ setting,trigger_pct,realised_prob,realised_se,gbm_prob,block_prob,realised_payou
 "In-Sample (Models Fitted on All Data, Tested on All Windows)",120.0,0.05468,0.01899,0.07941,0.0568,0.76812,0.59699,0.66412,9034
 "In-Sample (Models Fitted on All Data, Tested on All Windows)",130.0,0.01992,0.01167,0.02152,0.01938,0.43681,0.14168,0.32253,9034
 "In-Sample (Models Fitted on All Data, Tested on All Windows)",150.0,0.00697,0.00695,0.00099,0.00469,0.19985,0.00587,0.12632,9034
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",100.0,0.52277,0.06138,0.50999,0.51281,5.03854,5.53115,5.27454,4172
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",105.0,0.3092,0.05679,0.35447,0.34452,2.98655,3.3787,3.13815,4172
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",110.0,0.16755,0.04589,0.22571,0.21025,1.81049,1.94674,1.76775,4172
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",120.0,0.05129,0.02711,0.07523,0.06233,0.88031,0.54825,0.53061,4172
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",130.0,0.02301,0.01842,0.01952,0.01787,0.54283,0.12386,0.1791,4172
-"Out of Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",150.0,0.00719,0.01038,0.00086,0.00272,0.28722,0.00454,0.025,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",100.0,0.52277,0.06138,0.50999,0.51281,5.03854,5.53115,5.27454,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",105.0,0.3092,0.05679,0.35447,0.34452,2.98655,3.3787,3.13815,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",110.0,0.16755,0.04589,0.22571,0.21025,1.81049,1.94674,1.76775,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",120.0,0.05129,0.02711,0.07523,0.06233,0.88031,0.54825,0.53061,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",130.0,0.02301,0.01842,0.01952,0.01787,0.54283,0.12386,0.1791,4172
+"Out-of-Sample (Models Fitted Before 2010-01-01, Tested from 2010-01-01)",150.0,0.00719,0.01038,0.00086,0.00272,0.28722,0.00454,0.025,4172

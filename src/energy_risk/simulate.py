@@ -2,10 +2,10 @@ import numpy as np
 
 def simulate_gbm(s0, mu, sigma, days, n_paths, seed=42):   
     rng = np.random.default_rng(seed)                              # makes run reproducible
-    dt =  1 / 252                                                  # one trading day as a fration of a year
+    dt =  1 / 252                                                  # one trading day as a fraction of a year
     z = rng.standard_normal((n_paths, days))                       # grid of independent standard normal draws, one per simulated path 
     steps = (mu - 0.5 * sigma**2 ) * dt + sigma * np.sqrt(dt) * z  # formula applied to every cell giving each days log return
-    return s0 * np.exp(np.cumsum(steps, axis=1))                   # cumsum adds along each row gives ln(S_t / S_0) each day. exp coverts back to price ratios, * s0 gives price paths.
+    return s0 * np.exp(np.cumsum(steps, axis=1))                   # cumsum adds along each row gives ln(S_t / S_0) each day. exp converts back to price ratios, * s0 gives price paths.
     
     # uses geometric Brownian Motion (gbm): price follows dS = μ*S*dt + σ*S*dW 
     # with Ito's lemma dln(S) = (μ - 0.5σ^2)*dt + σdW. 
@@ -27,6 +27,6 @@ def sim_block_bootstrap(s0, returns, days, n_paths, block=21, seed=42):
     starts = rng.integers(0, len(x) - block + 1, size =(n_paths, n_blocks))
     idx = (starts[:, :, None] + np.arange(block)).reshape(n_paths, -1)[:, :days]  
     return s0 * np.exp(np.cumsum(x[idx], axis=1))
- # each path picks random start postitions, takes block consecutive returns from each, joins the blocks and trims to req number of days
- # Use block bootstrap as it resamples runs of consec. days instead of single ones.
- # Ech run keps the calm or turbulent character so volatility clustering survives.
+ # each path picks random start positions, takes block consecutive returns from each, joins the blocks and trims to req number of days
+ # Use block bootstrap as it resamples runs of consecutive days instead of single ones.
+ # Each run keeps the calm or turbulent character so volatility clustering survives.

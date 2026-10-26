@@ -11,7 +11,7 @@ from energy_risk.simulate import sim_block_bootstrap, simulate_gbm
 
 TERMS = (21, 63, 126)                      # 1, 3 and 6 months of trading days
 TRIGGER_FRACTIONS = (1.00, 1.05, 1.1, 1.2, 1.3, 1.5)
-N_PATHS = 100_000                           # Use 50_000 instead of 100,000 due if low laptop memory
+N_PATHS = 100_000                           # Use 50_000 if laptop memory is low
 LOADING = 0.20                             # This is an assumed margin, not a market figure
 BLOCK_DAYS = 21
 SEED = 42
@@ -39,7 +39,7 @@ for case, sigma in vol_cases.items():
     tables.append(sweep_policy_prices(paths, s0, TRIGGER_FRACTIONS, TERMS, LOADING, model = label))
     del paths
 
-paths = sim_block_bootstrap(s0, r0, days = MAX_TERM, n_paths=N_PATHS, seed = SEED) 
+paths = sim_block_bootstrap(s0, r0, days=MAX_TERM, n_paths=N_PATHS, block=BLOCK_DAYS, seed=SEED) 
 label = f"Block bootstrap ({BLOCK_DAYS}d)"
 tables.append(sweep_policy_prices(paths, s0, TRIGGER_FRACTIONS, TERMS, LOADING, model = label))
 del paths

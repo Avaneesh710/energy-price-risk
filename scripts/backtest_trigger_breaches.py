@@ -55,7 +55,7 @@ def compare(setting, fit_returns, start):
         "n_windows": real["n_windows"],
     })
     print(f"\n=== {setting} ===")
-    print(f"Models Fitted with Annualised Volatilty {sigma:.1%}; "
+    print(f"Models Fitted with Annualised Volatility {sigma:.1%}; "
           f"{real['n_windows'].iloc[0]} windows (about {n_eff:.0f} independent)")
     show = table.drop(columns=["setting", "n_windows"]).copy()
     for col in ["realised_prob", "realised_se", "gbm_prob", "block_prob"]:
@@ -65,8 +65,8 @@ def compare(setting, fit_returns, start):
     return table
 
 def crisis_check(setting, start, table):
-    full = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS,start=start)
-    excl = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS,start=start, exclude=EXCLUDE)
+    full = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS, start=start)
+    excl = realised_window_stats(prices, HORIZON, TRIGGER_FRACTIONS, start=start, exclude=EXCLUDE)
     full_total = full["expected_payout_pct"] * full["n_windows"]
     excl_total = excl["expected_payout_pct"] * excl["n_windows"]
     out = pd.DataFrame({
@@ -83,13 +83,15 @@ def crisis_check(setting, start, table):
     print(f"\n=== {setting}: Excluding Windows Starting {EXCLUDE[0]} to {EXCLUDE[1]} ===")
     print(f"{full['n_windows'].iloc[0] - excl['n_windows'].iloc[0]} Windows Removed")
     show = out.drop(columns=["setting", "n_windows_excl"]).copy()
+    show["realised_prob_excl"] = (show["realised_prob_excl"] * 100).round(1)
+    print("Probabilities in %, Payouts as % of the Starting Price")
     print(show.round(2).to_string(index=False))
     return out
 
 in_sample = compare("In-Sample (Models Fitted on All Data, Tested on All Windows)", r, None)
-out_sample = compare(f"Out of Sample (Models Fitted Before {SPLIT_DATE}, Tested from {SPLIT_DATE})", r[r.index < SPLIT_DATE], SPLIT_DATE)
+out_sample = compare(f"Out-of-Sample (Models Fitted Before {SPLIT_DATE}, Tested from {SPLIT_DATE})", r[r.index < SPLIT_DATE], SPLIT_DATE)
 in_crisis = crisis_check("In-Sample", None, in_sample)
-out_crisis = crisis_check("Out of Sample", SPLIT_DATE, out_sample)
+out_crisis = crisis_check("Out-of-Sample", SPLIT_DATE, out_sample)
 
 Path("results").mkdir(exist_ok=True)
 pd.concat([in_sample, out_sample]).round(5).to_csv("results/backtest_trigger_breaches.csv", index=False)
@@ -100,7 +102,7 @@ Path("figures").mkdir(exist_ok=True)
 fig, ax = plt.subplots(1,2, figsize=(12,5), sharey=True)
 for a, table, title in (
     (ax[0], in_sample, "In-Sample: Models Fitted on All Data"),
-    (ax[1], out_sample, f"Out-of Sample: Fitted Before {SPLIT_DATE[:4]}, Tested From {SPLIT_DATE}")
+    (ax[1], out_sample, f"Out-of-Sample: Fitted Before {SPLIT_DATE[:4]}, Tested From {SPLIT_DATE}")
 ):
     for col, label in (("realised_prob", "Realised (history)"), ("gbm_prob", "GBM"), ("block_prob", "Block Bootstrap")):
         a.plot(table["trigger_pct"], (table[col] * 100).replace(0, np.nan), marker="o", label=label)
@@ -109,7 +111,7 @@ for a, table, title in (
     a.set_yscale("log")
     a.grid(alpha=0.3)
     a.legend()
-ax[0].set_ylabel(f"Probability Average Price Over {HORIZON} Days Exceed Trigger (%, log scale)")
+ax[0].set_ylabel(f"Probability Average Price Over {HORIZON} Days Exceeds Trigger (%, log scale)")
 plt.tight_layout()
 plt.savefig("figures/brent_backtest_breach_prob.png", dpi=150)
 #plt.show()
